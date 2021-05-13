@@ -94,7 +94,7 @@ public class MoneyCards extends MiniGameWrapper {
 			{
 				if (canChangeCard) // TODO: Split off into own method
 				{
-					output.add(handleCardChange());
+					sendMessages(handleCardChange());
 				}
 				else
 				{
