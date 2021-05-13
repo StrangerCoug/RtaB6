@@ -86,26 +86,15 @@ public class MoneyCards extends MiniGameWrapper {
 		String[] allInAliases = {"ALL", "ALL IN", "ALL-IN", "ALLIN"};
 		String[] higherAliases = {"HIGHER", "HIGH", "H"};
 		String[] lowerAliases = {"LOWER", "LOW", "L"};
+		String[] changeAliases = {"CHANGE", "SWITCH"};
 		
 		//One-token messages are handled first
 		if (tokens.length != 2) {
-			if (pick.equalsIgnoreCase("CHANGE"))
+			if (Arrays.asList(changeAliases).contains(pick))
 			{
 				if (canChangeCard) // TODO: Split off into own method
 				{
-					canChangeCard = false;
-					Card oldCard = layout[stage];
-					CardRank oldRank = oldCard.getRank();
-					changeCard();
-					Card newCard = layout[stage];
-					CardRank newRank = newCard.getRank();
-					boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
-					
-					output.add("Alright then. The " + oldRank.getName() + " now becomes...");
-					output.add("...a" + (newRank==CardRank.ACE
-							|| newRank==CardRank.EIGHT ? "n" : "")
-							+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
-					output.add(generateBoard(false));
+					output.add(handleCardChange());
 				}
 				else
 				{
@@ -292,6 +281,24 @@ public class MoneyCards extends MiniGameWrapper {
 			awardMoneyWon(score);
 		else
 			getInput();
+	}
+
+	private LinkedList<String> handleCardChange() {
+		LinkedList<String> output = new LinkedList<>();
+		canChangeCard = false;
+		Card oldCard = layout[stage];
+		CardRank oldRank = oldCard.getRank();
+		changeCard();
+		Card newCard = layout[stage];
+		CardRank newRank = newCard.getRank();
+		boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
+		
+		output.add("Alright then. The " + oldRank.getName() + " now becomes...");
+		output.add("...a" + (newRank==CardRank.ACE
+				|| newRank==CardRank.EIGHT ? "n" : "")
+				+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
+		output.add(generateBoard(false));
+		return output;
 	}
 
 	@Override
